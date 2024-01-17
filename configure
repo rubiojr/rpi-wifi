@@ -80,13 +80,13 @@ MAC_ADDRESS="$(cat /sys/class/net/wlan0/address)"
 # Install dependencies
 sudo apt -y update
 sudo apt -y upgrade
-sudo apt -y install dnsmasq dhcpcd hostapd cron
+sudo apt -y install dnsmasq dhcpcd hostapd cron iptables
 
 # Populate `/etc/udev/rules.d/70-persistent-net.rules`
 sudo bash -c 'cat > /etc/udev/rules.d/70-persistent-net.rules' << EOF
 SUBSYSTEM=="ieee80211", ACTION=="add|change", ATTR{macaddress}=="${MAC_ADDRESS}", KERNEL=="phy0", \
   RUN+="/sbin/iw phy phy0 interface add ap0 type __ap", \
-  RUN+="/bin/ip link set ap0 address ${MAC_ADDRESS}
+  RUN+="/bin/ip link set ap0 address ${MAC_ADDRESS}"
 EOF
 
 # Populate `/etc/dnsmasq.conf`
@@ -108,7 +108,7 @@ interface=ap0
 driver=nl80211
 ssid=${AP_SSID}
 hw_mode=g
-channel=11
+channel=1
 wmm_enabled=0
 macaddr_acl=0
 auth_algs=1
